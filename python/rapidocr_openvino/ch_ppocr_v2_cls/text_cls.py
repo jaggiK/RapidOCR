@@ -82,7 +82,7 @@ class TextClassifier():
         else:
             resized_w = int(math.ceil(img_h * ratio))
 
-        resized_image = cv2.resize(img, (resized_w, img_h))
+        resized_image = cv2.resize(img, (img_w, img_h))
         resized_image = resized_image.astype('float32')
         if img_c == 1:
             resized_image = resized_image / 255
@@ -93,7 +93,7 @@ class TextClassifier():
         resized_image -= 0.5
         resized_image /= 0.5
         padding_im = np.zeros((img_c, img_h, img_w), dtype=np.float32)
-        padding_im[:, :, :resized_w] = resized_image
+        padding_im[:, :, :img_w] = resized_image
         return padding_im
 
 
