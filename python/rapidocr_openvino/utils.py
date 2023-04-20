@@ -23,7 +23,7 @@ class OpenVINOInferSession():
         config['model_path'] = str(root_dir / config['model_path'])
         self._verify_model(config['model_path'])
         model_onnx = ie.read_model(config['model_path'])
-        compile_model = ie.compile_model(model=model_onnx, device_name='CPU')
+        compile_model = ie.compile_model(model=model_onnx, device_name='GPU')
         self.session = compile_model.create_infer_request()
 
     def __call__(self, input_content: np.ndarray) -> np.ndarray:
