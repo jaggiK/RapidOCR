@@ -78,6 +78,7 @@ class RapidOCR():
             det_elapse = 0.0
         else:
             dt_boxes, det_elapse = self.text_detector(img)
+            # print("det boxes = {}".format(dt_boxes))
             if dt_boxes is None or len(dt_boxes) < 1:
                 return None, None
 

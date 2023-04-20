@@ -11,6 +11,7 @@ import numpy as np
 import yaml
 from openvino.runtime import Core
 from PIL import Image, UnidentifiedImageError
+from openvino.runtime import serialize
 
 root_dir = Path(__file__).resolve().parent
 InputType = Union[str, np.ndarray, bytes, Path]
@@ -22,8 +23,32 @@ class OpenVINOInferSession():
 
         config['model_path'] = str(root_dir / config['model_path'])
         self._verify_model(config['model_path'])
+        print("------", config['model_path'])
         model_onnx = ie.read_model(config['model_path'])
-        compile_model = ie.compile_model(model=model_onnx, device_name='GPU')
+        # serialize(model_onnx, xml_path="models/exported_onnx_model.xml")
+        if "det" in config['model_path']:
+            model_onnx.reshape([1, 3, 960, 2112])
+        elif "rec" in config['model_path']:
+            model_onnx.reshape([1, 3, 48, 320])
+        elif "cls" in config['model_path']:
+            model_onnx.reshape([1, 3, 48, 192])
+        # model_onnx.reshape([(1, 10), C, H, W])
+        print(model_onnx)
+        print(model_onnx.inputs)
+        print(model_onnx.outputs)
+        # input_layer = model_onnx.input(0)
+        # output_layer = model_onnx.output(0)
+        # partial_shape = model_onnx.output(0).get_partial_shape() # get zero output partial shape
+        # print("partial shape : {}".format(partial_shape))
+        # if not partial_shape.is_dynamic: # or partial_shape.is_static
+        #     static_shape = partial_shape.get_shape()
+        #     print("static shape = {}".format(static_shape))
+        # # print("input shape = {}".format(input_layer.shape))
+        # print("output shape = {}".format(output_layer.shape))
+        # config = {"PERFORMANCE_HINT": "THROUGHPUT",
+        #  # "ALLOW_AUTO_BATCHING": True,
+        #   "PERFORMANCE_HINT_NUM_REQUESTS": "4"}
+        compile_model = ie.compile_model(model=model_onnx, device_name="GPU")#, config=config)
         self.session = compile_model.create_infer_request()
 
     def __call__(self, input_content: np.ndarray) -> np.ndarray:

@@ -54,6 +54,7 @@ class TextRecognizer():
 
         batch_num = self.rec_batch_num
         elapse = 0
+        # print("rec batch num : {}".format(batch_num))
         for beg_img_no in range(0, img_num, batch_num):
             end_img_no = min(img_num, beg_img_no + batch_num)
             max_wh_ratio = 0
@@ -66,9 +67,10 @@ class TextRecognizer():
             for ino in range(beg_img_no, end_img_no):
                 norm_img = self.resize_norm_img(img_list[indices[ino]],
                                                 max_wh_ratio)
+                # print("norm img size = {}".format(norm_img.shape))
                 norm_img_batch.append(norm_img[np.newaxis, :])
             norm_img_batch = np.concatenate(norm_img_batch).astype(np.float32)
-
+            # print("norm batch size = {}".format(norm_img_batch.shape))
             starttime = time.time()
             preds = self.infer(norm_img_batch)
             rec_result = self.postprocess_op(preds)
@@ -79,9 +81,10 @@ class TextRecognizer():
 
     def resize_norm_img(self, img, max_wh_ratio):
         img_channel, img_height, img_width = self.rec_image_shape
+        # print("rec image shape = {}, {}, {}".format(img_channel, img_height, img_width))
         assert img_channel == img.shape[2]
 
-        img_width = int(img_height * max_wh_ratio)
+        #img_width = int(img_height * max_wh_ratio)
 
         h, w = img.shape[:2]
         ratio = w / float(h)
@@ -98,7 +101,10 @@ class TextRecognizer():
 
         padding_im = np.zeros((img_channel, img_height, img_width),
                               dtype=np.float32)
+        # print("padding image size = {}".format(padding_im.shape))
+
         padding_im[:, :, 0:resized_w] = resized_image
+        # print("padding image size = {}".format(padding_im.shape))
         return padding_im
 
 
