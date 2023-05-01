@@ -27,7 +27,7 @@ class OpenVINOInferSession():
         model_onnx = ie.read_model(config['model_path'])
         # serialize(model_onnx, xml_path="models/exported_onnx_model.xml")
         if "det" in config['model_path']:
-            model_onnx.reshape([1, 3, 960, 2112])
+            model_onnx.reshape([1, 3, 544, 960])
         elif "rec" in config['model_path']:
             model_onnx.reshape([1, 3, 48, 320])
         elif "cls" in config['model_path']:
